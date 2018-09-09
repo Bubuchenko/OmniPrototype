@@ -1,0 +1,146 @@
+﻿<template>
+    <div id='app-root'>
+        <transition name="fade">
+            <div class="overlay" v-if="inputFocused"></div>
+        </transition>
+        <a-layout>
+            <div style="background-color: rgba(1, 21, 41, 0.88); height: 25px;">
+                <div style="color:#fff !important; position: absolute; right: 8px; font-size: 18px"><a-icon type="close-square-o" /></div>
+            </div>
+            <a-layout-header class="header">
+                <a-menu mode="horizontal" theme="light" v-model="current">
+                    <a-menu-item key="Home"><a-icon type="home" />Goeiemorgen Leroy</a-menu-item>
+                    <a-menu-item key="Apps"><a-icon type="appstore" />Applicaties</a-menu-item>
+                    <a-menu-item key="Messages"><a-icon type="inbox" />Meldingen</a-menu-item>
+                </a-menu>
+            </a-layout-header>
+
+            <a-layout-content :style="{ margin: '16px', padding: '24px', background: '#009' }">
+
+                <div style="color: #fff; font-family: Roboto; font-size: 26px; font-weight:200; margin-bottom: 15px">Waarmee kunnen wij je helpen?</div>
+                <a-auto-complete dropdownClassName="certain-category-search-dropdown"
+                                 size="large"
+                                 style="width: 100%; z-index:2"
+                                 placeholder="Outlook start niet op"
+                                 :allowClear="true"
+                                 :backfill="true"
+                                 :defaultActiveFirstOption="false"
+                                 v-model="inputPhrase"
+                                 @blur="onBlurInputbox"
+                                 @focus="onFocusInputbox">
+
+
+                    <!-- Most common problems-->
+                        <template slot="dataSource" v-if="inputPhrase.length < 1">
+                            <a-select-option v-for="item, index in dataSource" :key="item.Title">
+                                <a-divider orientation="left" v-if="index < 1"> Meest vorkomende problemen </a-divider>
+                                <a-icon style="color: #fd6400" type="right-circle" />  <span style="color: #009; margin-left:12px; font-size: 16px">{{ item.Title }}</span>
+                            </a-select-option>
+                        </template>
+
+                    <template slot="dataSource" v-if="inputPhrase.length > 0">
+
+                        <!-- Suggestions -->
+                        <a-select-option v-for="item, index in dataSource" :key="item.Title">
+                            <span style="font-size: 12px">{{ item.Title }}</span>
+                        </a-select-option>
+
+                        <!-- Solutions -->
+                        <a-select-option v-for="item, index in dataSource" :key="item.Title">
+                            <a-divider orientation="left" v-if="index < 1"> Top 3 resultaten </a-divider>
+                            <a-icon style="color: #fd6400" type="right-circle" />  <span style="color: #009; margin-left:12px; font-size: 16px">{{ item.Title }}</span>
+                        </a-select-option>
+
+                        <!-- AI -->
+                        <a-select-option v-for="i in 1">
+                            <a-divider orientation="left"> Nina de virtuele assistent &nbsp; <a-icon type="message" /> </a-divider>
+
+                            <a-row :gutter="70">
+                                <a-col :span="2">
+                                    <img src="Images/Fancy_Nina.png" style="width: 64px; display:inline-block;" />
+                                </a-col>
+
+                                <a-col :span="21">
+                                    <span style="color: #009; font-size: 16px; display:inline-block; vertical-align: top; margin-bottom:5px">Wat vervelend dat outlook niet werkt. Wat is er aan de hand?</span>
+                                    <br />
+                                    <a-button size="small" type="secondary">Outlook vraagt om gebruikersnaam en wachtwoord</a-button>
+                                    <a-button size="small" type="secondary">Er verschijnt een foutmelding</a-button> <br />
+                                    <a-button size="small" type="secondary" style="margin-top: 5px">Outlook start niet op</a-button>
+                                </a-col>
+                            </a-row>
+                        </a-select-option>
+                    </template>
+
+                </a-auto-complete>
+            </a-layout-content>
+
+            <!-- Verstoorde toepassingen -->
+            <a-layout-content :style="{ margin: '0px 16px 16px 16px', padding: '0px 20px 20px 20px', background: '#fff'}">
+                <a-divider orientation="left" style="font-family: Roboto; font-weight: 400">Verstoorde toepassingen</a-divider>
+                <a-row :gutter="8">
+                    <a-col :span="6" v-for="index in 4" :key="index">
+                        <div style="background-color: #808080; color: white; padding:10px 20px 10px 20px; margin: 5px;">
+                            <a-icon type="warning" />
+                            Applicatie {{ index }}
+                        </div>
+                    </a-col>
+                </a-row>
+            </a-layout-content>
+
+            <!-- News -->
+            <a-layout-content :style="{ margin: '0px 16px 16px 16px', padding: '0px 20px 20px 20px', background: '#fff', minHeight: '280px' }">
+                <a-divider orientation="left" style="font-family: Roboto; font-weight: 400">Nieuws</a-divider>
+                <a-row :gutter="16">
+                    <a-col :span="8" v-for="index in 3" :key="index">
+                        <a-card hoverable>
+                            <img src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+                                 slot="cover" />
+                            <a-card-meta title="Nieuwe dingen"
+                                         description="In deze aflevering gaat Danny Meerman op reis naar Australie...">
+                            </a-card-meta>
+                        </a-card>
+                    </a-col>
+                </a-row>
+
+            </a-layout-content>
+        </a-layout>
+    </div>
+</template>
+
+<script src="./app.ts"></script>
+
+<style>
+    .header {
+        padding: 0px !important;
+        height: initial;
+    }
+
+    .overlay {
+        height: 100%;
+        width: 100%;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0, 0.6); /* Black with a little bit see-through */
+    }
+
+    .fade-enter-active, .fade-leave-active {
+        transition: all .2s;
+    }
+
+    .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+        background-color: rgba(0,0,0, 0.0);
+        opacity: 0;
+    }
+
+    .certain-category-search-dropdown .ant-select-dropdown-menu-item-group-title {
+        height: 900px;
+    }
+
+    .ant-select-dropdown-menu {
+        max-height: 500px;
+        padding-bottom: 20px;
+    }
+</style>
